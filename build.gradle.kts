@@ -21,8 +21,7 @@ repositories {
 dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    val mySQLVersion = "5.1.34"
-    implementation("mysql:mysql-connector-java:$mySQLVersion")
+    implementation("mysql:mysql-connector-java:5.1.34")
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
