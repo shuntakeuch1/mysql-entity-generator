@@ -1,5 +1,4 @@
-package mysql.entity.generator
-
+package app.entity
 
 class Table(
     val name:String,
