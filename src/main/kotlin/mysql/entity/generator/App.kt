@@ -1,5 +1,7 @@
 package mysql.entity.generator
 
+import java.io.File
+import java.io.PrintWriter
 import java.sql.DriverManager
 
 class App {
@@ -7,6 +9,8 @@ class App {
         const val jdbcURL = "jdbc:mysql://127.0.0.1/example"
         const val user = "root"
         const val password = "root"
+        const val rootDirectory = "./"
+        const val targetDirectory = "outputFile" // project root
     }
 
     /**
@@ -30,7 +34,7 @@ class App {
                 val column = Column(
                     field = resultSet.getString("Field"),
                     type = resultSet.getString("Type"),
-                    nulFlag = resultSet.getString("Null"),
+                    nullFlag = resultSet.getString("Null"),
                     key = resultSet.getString("Key"),
                     defaultFlag = resultSet.getString("Default"),
                     extra = resultSet.getString("Extra")
@@ -50,7 +54,32 @@ class App {
     }
 
     fun makeEntity(tables: List<Table>) {
+        val newDir = File(rootDirectory + targetDirectory)
+        if (newDir.mkdir()) {
+            println("make directory")
+        }
+        tables.forEach { it ->
+            val className = it.name.capitalize()
+            val filename = "$className.kt"
+            val newFile = File("$targetDirectory/$filename")
 
+            if (newFile.createNewFile()) {
+                println("make $filename")
+            }
+            val pw = PrintWriter(newFile)
+            var fieldVariablesString = ""
+            val columnLastIndex = it.columns.lastIndex
+            for ((index, column) in it.columns.withIndex()) {
+                fieldVariablesString += "\n val ${column.field.toString()}: ${column.typeConverter()}"
+                if (index != columnLastIndex) {
+                    fieldVariablesString += ","
+                }
+            }
+            pw.println("package $targetDirectory \n")
+            pw.println("class $className ($fieldVariablesString \n)")
+            pw.flush()
+            pw.close()
+        }
     }
 }
 
