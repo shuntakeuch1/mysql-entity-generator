@@ -16,18 +16,29 @@ class App {
         Class.forName("com.mysql.jdbc.Driver")
         val conn = DriverManager.getConnection(jdbcURL, user, password)
         val statement = conn.createStatement()
-        val resultSet = statement.executeQuery("SHOW DATABASES;")
+        var resultSet = statement.executeQuery("show tables;")
+        var tables = arrayOf<String>()
+
         while (resultSet.next()) {
-            val database = resultSet.getString("Database")
-            println(database)
+            val table = resultSet.getString("Tables_in_example")
+            tables += table
         }
+        tables.forEach {
+            println(it)
+            resultSet = statement.executeQuery("show columns from $it;")
+            while (resultSet.next()){
+                val field= resultSet.getString("Field")
+                println(field)
+            }
+        }
+
         resultSet.close()
         statement.close()
         conn.close()
     }
 }
 
-// できたら optiondでdata classかclassかを読み込む
+// できたら optionでdata classかclassかを読み込む
 // table情報とカラムを読み込む
 // 情報を元にfile生成する rootにファイル生成する
 // 終了コードを出す
